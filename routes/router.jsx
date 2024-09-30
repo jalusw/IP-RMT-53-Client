@@ -1,5 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 
-const router = createBrowserRouter([]);
+import NotFound from "../src/pages/NotFound";
+
+const router = createBrowserRouter([
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
 
 export default router;
