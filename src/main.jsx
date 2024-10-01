@@ -1,7 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
-import { Theme } from "@radix-ui/themes";
+import { Theme, ThemePanel } from "@radix-ui/themes";
+import { Provider } from "react-redux";
+import { store } from "./config/store";
 
 import router from "../routes/router";
 
@@ -10,8 +12,10 @@ import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Theme>
-      <RouterProvider router={router} />
-    </Theme>
-  </StrictMode>
+    <Provider store={store}>
+      <Theme accentColor="indigo" appearance="dark">
+        <RouterProvider router={router} />
+      </Theme>
+    </Provider>
+  </StrictMode>,
 );
