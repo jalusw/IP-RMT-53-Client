@@ -1,0 +1,4 @@
+.radix-themes {
+  --default-font-family: "Manrope", sans-serif; /* Your custom default font */
+  --heading-font-family: "Merriweather", serif; /* Your custom font for <Heading> components */
+}
