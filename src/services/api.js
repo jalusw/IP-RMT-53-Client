@@ -47,6 +47,13 @@ export const api = createApi({
         body,
       }),
     }),
+    updateNote: builder.mutation({
+      query: (body) => ({
+        url: `/notes/${body.id}`,
+        method: "PUT",
+        body,
+      }),
+    }),
     deleteNote: builder.mutation({
       query: (id) => ({
         url: `/notes/${id}`,
@@ -62,6 +69,7 @@ export const {
   useProfileUpdateMutation,
   useCreateNoteMutation,
   useDeleteNoteMutation,
+  useUpdateNoteMutation,
   useNotesQuery,
   useNoteQuery,
 } = api;

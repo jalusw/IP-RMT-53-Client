@@ -6,8 +6,8 @@ import Login from "../src/pages/Login";
 import Register from "../src/pages/Register";
 import General from "../src/components/layouts/General";
 import Workspace from "../src/pages/Workspace";
-import AuthGuard from "../src/components/guard/AuthGuard";
 import WorkspaceEdit from "../src/pages/WorkspaceEdit";
+import AuthGuard from "../src/components/guard/AuthGuard";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +35,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <Workspace />,
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/workspace/:id",
+    element: (
+      <AuthGuard>
+        <WorkspaceEdit />,
       </AuthGuard>
     ),
   },
