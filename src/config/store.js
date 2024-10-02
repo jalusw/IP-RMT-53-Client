@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 import { api } from "../services/api";
 
 import { authSlice } from "../slices/authSlice";
+import { themeSlice } from "../slices/themeSlice";
 
 const persistConfig = {
   key: "root",
@@ -16,6 +17,7 @@ const persistedReducer = persistReducer(
   combineReducers({
     [api.reducerPath]: api.reducer,
     auth: authSlice.reducer,
+    theme: themeSlice.reducer,
   }),
 );
 
