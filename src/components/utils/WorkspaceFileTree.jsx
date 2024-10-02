@@ -14,13 +14,19 @@ import {
   Tabs,
 } from "@radix-ui/themes";
 import { useNavigate } from "react-router-dom";
-import { useNotesQuery } from "../../services/api";
+import { useNotesQuery, useDeleteNoteMutation } from "../../services/api";
 import { FileIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
-export default function WorkspaceFileTree() {
+export default function WorkspaceFileTree(props) {
   const navigate = useNavigate();
 
-  const { data: notesData, isLoading: notesIsLoading } = useNotesQuery();
+  const {
+    data: notesData,
+    refetch,
+    isLoading: notesIsLoading,
+  } = useNotesQuery();
+  const [deleteNote, { isLoading: deleteNoteIsLoading }] =
+    useDeleteNoteMutation();
 
   if (notesIsLoading) {
     return <p>loading..</p>;
@@ -64,15 +70,20 @@ export default function WorkspaceFileTree() {
                   </Text>
                 </ContextMenu.Trigger>
                 <ContextMenu.Content>
-                  <ContextMenu.Item shortcut="⌘ E">Edit</ContextMenu.Item>
+                  <ContextMenu.Item shortcut="⌘ E">Archive</ContextMenu.Item>
                   <ContextMenu.Item shortcut="⌘ D">Duplicate</ContextMenu.Item>
                   <ContextMenu.Separator />
-                  <ContextMenu.Item shortcut="⌘ N">Archive</ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item>Share</ContextMenu.Item>
-                  <ContextMenu.Item>Add to favorites</ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item shortcut="⌘ ⌫" color="red">
+                  <ContextMenu.Item
+                    color="red"
+                    onClick={async () => {
+                      try {
+                        const response = await deleteNote(note.id);
+                        refetch();
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    }}
+                  >
                     Delete
                   </ContextMenu.Item>
                 </ContextMenu.Content>
