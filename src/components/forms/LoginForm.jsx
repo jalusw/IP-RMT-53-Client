@@ -20,7 +20,7 @@ export default function LoginForm() {
     try {
       const response = await login(data).unwrap();
       dispatch(setUser(response.data.user));
-      dispatch(setToken(response.data.token));
+      dispatch(setToken(response.data.access_token));
       navigate("/");
     } catch (error) {
       if (error.data?.status == 400) {
@@ -29,6 +29,11 @@ export default function LoginForm() {
             type: "manual",
             message: error.message,
           });
+        });
+      } else if (error.data?.status == 401) {
+        setError("email", {
+          type: "manual",
+          message: "Email or password is incorrect",
         });
       }
     }
@@ -65,7 +70,7 @@ export default function LoginForm() {
       </Grid>
       <Button className="mt-8 w-full" disabled={isLoading}>
         {isLoading && <Spinner size="2" />}
-        Sign Up
+        Sign In
       </Button>
     </form>
   );
