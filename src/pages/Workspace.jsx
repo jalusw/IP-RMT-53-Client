@@ -19,19 +19,30 @@ import {
   toolbarPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
+  Separator as ToolbarSeparator,
+  imagePlugin,
+  InsertImage,
+  tablePlugin,
+  InsertTable,
+  thematicBreakPlugin,
+  InsertThematicBreak,
+  BlockTypeSelect,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import WorkspaceNavbar from "../components/utils/WorkspaceNavbar";
 import WorkspaceFileTree from "../components/utils/WorkspaceFileTree";
-import { useNoteMutation } from "../services/api";
+import { useCreateNoteMutation } from "../services/api";
+import { useSelector } from "react-redux";
 
 export default function Workspace() {
-  const [title, setTitle] = useState("");
-  const [markdown, setMarkdown] = useState("# Hello World !");
+  const [title, setTitle] = useState("Untitled");
+  const [markdown, setMarkdown] = useState("");
+  const { appearance } = useSelector((state) => state.theme);
 
-  const [createNote, { isLoading }] = useNoteMutation(markdown);
+  const [createNote] = useCreateNoteMutation(markdown);
+
   const saveNote = async () => {
     try {
       const respone = await createNote({
@@ -50,7 +61,7 @@ export default function Workspace() {
       <WorkspaceNavbar />
       <main id="main">
         <Container className="px-4">
-          <Flex gap="8" className="">
+          <Flex gap="4">
             <Box className="max-w-[250px] flex-1">
               <WorkspaceFileTree />
             </Box>
@@ -66,6 +77,16 @@ export default function Workspace() {
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content>
                       <DropdownMenu.Item
+                        shortcut="Ctrl + n"
+                        onClick={() => {
+                          setTitle("Untitled");
+                          editorRef.current.setMarkdown("");
+                        }}
+                      >
+                        New File
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Separator />
+                      <DropdownMenu.Item
                         shortcut="Ctrl + s"
                         onClick={() => saveNote()}
                       >
@@ -78,7 +99,7 @@ export default function Workspace() {
                       <DropdownMenu.Item
                         color="red"
                         onClick={() => {
-                          editorRef.current.setMarkdown("# Hello World!");
+                          editorRef.current.setMarkdown("");
                         }}
                       >
                         Reset
@@ -99,21 +120,28 @@ export default function Workspace() {
                   />
                 </Box>
                 <MDXEditor
-                  className="mt-4"
                   markdown={markdown}
                   onChange={(value) => setMarkdown(value)}
                   ref={editorRef}
-                  contentEditableClassName="prose"
+                  contentEditableClassName={`prose ${appearance == "dark" && "prose-invert"}`}
                   plugins={[
                     headingsPlugin(),
                     quotePlugin(),
                     listsPlugin(),
                     markdownShortcutPlugin(),
+                    imagePlugin(),
+                    tablePlugin(),
+                    thematicBreakPlugin(),
                     toolbarPlugin({
                       toolbarContents: () => (
                         <>
                           <UndoRedo />
+                          <ToolbarSeparator />
+                          <BlockTypeSelect />
                           <BoldItalicUnderlineToggles />
+                          <InsertImage />
+                          <InsertTable />
+                          <InsertThematicBreak />
                         </>
                       ),
                     }),
