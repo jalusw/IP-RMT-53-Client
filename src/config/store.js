@@ -7,13 +7,13 @@ import { api } from "../services/api";
 import { authSlice } from "../slices/authSlice";
 import { themeSlice } from "../slices/themeSlice";
 
-const persistConfig = {
-  key: "root",
-  storage,
-};
-
 const persistedReducer = persistReducer(
-  persistConfig,
+  {
+    key: "root",
+    storage,
+    blacklist: [api.reducerPath],
+    whitelist: ["auth", "theme"],
+  },
   combineReducers({
     [api.reducerPath]: api.reducer,
     auth: authSlice.reducer,
