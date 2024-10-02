@@ -1,9 +1,13 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 
 import NotFound from "../src/pages/NotFound";
 import Home from "../src/pages/Home";
 import Login from "../src/pages/Login";
 import Register from "../src/pages/Register";
+import General from "../src/components/layouts/General";
+import Workspace from "../src/pages/Workspace";
+import AuthGuard from "../src/components/guard/AuthGuard";
+import WorkspaceEdit from "../src/pages/WorkspaceEdit";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +16,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <General>
+        <Home />,
+      </General>
+    ),
   },
   {
     path: "/login",
@@ -21,6 +29,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/workspace",
+    element: (
+      <AuthGuard>
+        <Workspace />,
+      </AuthGuard>
+    ),
   },
 ]);
 
