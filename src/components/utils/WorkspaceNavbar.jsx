@@ -7,7 +7,7 @@ export default function WorkspaceNavbar() {
   return (
     <Section asChild size="2">
       <nav>
-        <Container className="px-4">
+        <Container className="px-8">
           <Flex justify="between" align="center">
             <ProfileSetting />
             <Box></Box>
