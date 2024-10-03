@@ -21,6 +21,7 @@ import {
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { Link as RouterLink } from "react-router-dom";
 import GoogleButton from "react-google-button";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
   const { appearance } = useSelector((state) => state.theme);
@@ -56,6 +57,8 @@ export default function LoginForm() {
           type: "manual",
           message: "Email or password is incorrect",
         });
+      } else {
+        toast.error("Something went wrong");
       }
     }
   };
@@ -69,10 +72,12 @@ export default function LoginForm() {
         dispatch(setToken(response.data.access_token));
         navigate("/");
       } catch (error) {
-        console.log(error);
+        toast.error("Something went wrong");
       }
     },
-    onError: (error) => {},
+    onError: (error) => {
+      toast.error("Something went wrong");
+    },
     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
     scope: "https://www.googleapis.com/auth/drive",
   });

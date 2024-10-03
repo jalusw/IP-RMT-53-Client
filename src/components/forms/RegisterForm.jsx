@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "../../services/api";
 
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RegisterForm() {
   const {
@@ -32,6 +33,8 @@ export default function RegisterForm() {
             message: error.message,
           });
         });
+      } else {
+        toast.error("An error occurred. Please try again later.");
       }
     }
   };
