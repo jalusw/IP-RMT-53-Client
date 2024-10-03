@@ -26,35 +26,13 @@ export default function Navbar() {
         <nav>
           <Container px="4">
             <Flex justify="between" align="center">
-              <Flex
-                className="w-full md:w-auto"
-                align="center"
-                gap="4"
-                justify="between"
-              >
-                <Heading>FlowMD</Heading>
-                <Button className="md:hidden" variant="outline">
-                  <HamburgerMenuIcon />
-                </Button>
-              </Flex>
-              <Box className="hidden md:block" />
-              <Flex asChild justify="between" gap="8">
-                <ul className="hidden md:flex">
-                  <li>
-                    <Link asChild>
-                      <RouterLink to="/">Home</RouterLink>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link asChild>
-                      <RouterLink to="/docs">Docs</RouterLink>
-                    </Link>
-                  </li>
-                </ul>
-              </Flex>
+              <Heading className="manrope-bold">
+                <RouterLink to="/">FlowMD</RouterLink>
+              </Heading>
+
               <Box />
               <Flex asChild gap="4">
-                <ul className="hidden md:flex">
+                <ul>
                   <li>
                     <ThemeSwitcher />
                   </li>
