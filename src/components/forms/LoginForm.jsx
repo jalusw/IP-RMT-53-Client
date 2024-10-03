@@ -7,20 +7,23 @@ import {
   Spinner,
   Link,
   Separator,
+  Card,
 } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { useGoogleAuthMutation, useLoginMutation } from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setGoogleCredentials,
   setToken,
   setUser,
 } from "../../slices/authSlice";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { Link as RouterLink } from "react-router-dom";
+import GoogleButton from "react-google-button";
 
 export default function LoginForm() {
+  const { appearance } = useSelector((state) => state.theme);
   const {
     register,
     handleSubmit,
@@ -56,6 +59,23 @@ export default function LoginForm() {
       }
     }
   };
+
+  const loginAction = useGoogleLogin({
+    onSuccess: async (credentials) => {
+      dispatch(setGoogleCredentials(credentials));
+      try {
+        const response = await googleAuth(credentials).unwrap();
+        dispatch(setUser(response.data.user));
+        dispatch(setToken(response.data.access_token));
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onError: (error) => {},
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    scope: "https://www.googleapis.com/auth/drive",
+  });
 
   return (
     <>
@@ -100,26 +120,18 @@ export default function LoginForm() {
         </Link>
       </Box>
       <Separator className="mt-8 w-full" />
-      <Box className="mt-8">
-        <GoogleLogin
-          onSuccess={async (credentialResponse) => {
-            try {
-              const auth = await googleAuth({
-                credentials: credentialResponse,
-              });
-              dispatch(setGoogleCredentials(credentialResponse));
-              dispatch(setUser(auth.data.data.user));
-              dispatch(setToken(auth.data.data.access_token));
-              navigate("/");
-            } catch (error) {
-              console.log("Login Failed");
-            }
+      <Card className="mt-8 p-0" size="1">
+        <GoogleButton
+          style={{
+            margin: "0 auto",
+            padding: "0",
+            width: "100%",
+            boxShadow: "none",
           }}
-          onError={() => {
-            console.log("Login Failed");
-          }}
+          type={appearance === "dark" ? "dark" : "light"}
+          onClick={loginAction}
         />
-      </Box>
+      </Card>
     </>
   );
 }
