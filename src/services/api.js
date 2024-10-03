@@ -71,6 +71,20 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
+    enhanceNote: builder.mutation({
+      query: (body) => ({
+        url: `/assistant/enhance`,
+        body,
+        method: "POST",
+      }),
+    }),
+    summarizeNote: builder.mutation({
+      query: (body) => ({
+        url: `/assistant/summarize`,
+        body,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -82,6 +96,8 @@ export const {
   useCreateNoteMutation,
   useDeleteNoteMutation,
   useUpdateNoteMutation,
+  useEnhanceNoteMutation,
+  useSummarizeNoteMutation,
   useNotesQuery,
   useNoteQuery,
 } = api;
