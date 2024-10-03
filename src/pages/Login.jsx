@@ -1,5 +1,4 @@
-import { Box, Card, Flex, Heading, Link, Text } from "@radix-ui/themes";
-import { Link as RouterLink } from "react-router-dom";
+import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import LoginForm from "../components/forms/LoginForm";
 
 export default function Login() {
@@ -16,12 +15,6 @@ export default function Login() {
             <Heading size="8">Sign In</Heading>
             <Text className="mt-4 block">Please sign in to continue.</Text>
             <LoginForm />
-            <Box className="mt-8 text-center">
-              <Text>Don't have account? </Text>
-              <Link asChild className="">
-                <RouterLink to="/register">Sign Up</RouterLink>
-              </Link>
-            </Box>
           </Box>
         </Card>
       </Flex>

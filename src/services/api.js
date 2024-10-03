@@ -12,6 +12,7 @@ export const api = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Note"],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (body) => ({
@@ -27,6 +28,13 @@ export const api = createApi({
         body,
       }),
     }),
+    googleAuth: builder.mutation({
+      query: (body) => ({
+        url: "/auth/google",
+        method: "POST",
+        body,
+      }),
+    }),
     profileUpdate: builder.mutation({
       query: (body) => ({
         url: "/auth/profile",
@@ -36,6 +44,7 @@ export const api = createApi({
     }),
     notes: builder.query({
       query: () => "/notes",
+      providesTags: ["Note"],
     }),
     note: builder.query({
       query: (id) => `/notes/${id}`,
@@ -46,6 +55,7 @@ export const api = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Note"],
     }),
     updateNote: builder.mutation({
       query: (body) => ({
@@ -53,6 +63,7 @@ export const api = createApi({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Note"],
     }),
     deleteNote: builder.mutation({
       query: (id) => ({
@@ -66,6 +77,7 @@ export const api = createApi({
 export const {
   useRegisterMutation,
   useLoginMutation,
+  useGoogleAuthMutation,
   useProfileUpdateMutation,
   useCreateNoteMutation,
   useDeleteNoteMutation,
