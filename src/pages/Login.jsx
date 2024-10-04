@@ -21,7 +21,7 @@ export default function Login() {
             </Box>
           </Card>
           <Box className="hidden h-[100vh] w-full flex-1 items-center justify-center px-8 md:flex">
-            <Text className="merriweather-regular max-w-[33ch] text-center text-3xl leading-relaxed xl:text-4xl xl:leading-relaxed">
+            <Text className="manrope-bold max-w-[33ch] text-center text-3xl leading-relaxed xl:text-4xl xl:leading-relaxed">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero
               provident corrupti ducimus.
             </Text>
