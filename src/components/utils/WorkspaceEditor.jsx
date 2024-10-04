@@ -57,13 +57,6 @@ export default forwardRef(function WorkspaceEditor(props, ref) {
               <>
                 <UndoRedo />
                 <ToolbarSeparator />
-                <BlockTypeSelect />
-                <BoldItalicUnderlineToggles />
-                <ListsToggle />
-                <InsertImage />
-                <InsertTable />
-                <InsertThematicBreak />
-                <ToolbarSeparator />
                 <Button
                   onClick={async () => {
                     try {
