@@ -14,7 +14,7 @@ export default function Logout() {
   };
 
   return (
-    <Button variant="soft" className="cursor-pointer" onClick={logout}>
+    <Button variant="outline" className="cursor-pointer" onClick={logout}>
       <ExitIcon size={16} />
     </Button>
   );

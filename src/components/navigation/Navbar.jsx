@@ -26,7 +26,7 @@ export default function Navbar() {
         <nav>
           <Container px="4">
             <Flex justify="between" align="center">
-              <Heading className="manrope-bold">
+              <Heading className="manrope-bold" color="jade">
                 <RouterLink to="/">FlowMD</RouterLink>
               </Heading>
 
