@@ -74,12 +74,15 @@ export default function Home() {
           </Section>
         </Container>
         <footer>
-          <Container className="mt-40 py-10">
+          <Container className="mt-40 px-8 py-10">
             <Heading className="manrope-bold text-4xl" color="jade">
               FlowMD
             </Heading>
             <Separator className="mt-4 w-full" />
-            <Flex className="mt-8" justify="between">
+            <Flex
+              className="mt-8 flex-col gap-y-8 md:flex-row"
+              justify="between"
+            >
               <Flex gap="4">
                 <Link to="/">Home</Link>
                 <Link to="/">Support</Link>
