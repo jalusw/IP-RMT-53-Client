@@ -75,7 +75,9 @@ export default function Home() {
         </Container>
         <footer>
           <Container className="mt-40 py-10">
-            <Heading className="manrope-bold text-4xl">FlowMD</Heading>
+            <Heading className="manrope-bold text-4xl" color="jade">
+              FlowMD
+            </Heading>
             <Separator className="mt-4 w-full" />
             <Flex className="mt-8" justify="between">
               <Flex gap="4">
