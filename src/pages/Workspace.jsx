@@ -15,9 +15,11 @@ import WorkspaceEditor from "../components/utils/WorkspaceEditor";
 
 import { useRef, useState } from "react";
 
-import { api, useCreateNoteMutation, useNotesQuery } from "../services/api";
+import { useCreateNoteMutation, useSaveToDriveMutation } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { FileIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 export default function Workspace() {
   const [title, setTitle] = useState("Untitled");
@@ -25,6 +27,10 @@ export default function Workspace() {
     useCreateNoteMutation();
   const editorRef = useRef();
   const navigate = useNavigate();
+  const { googleCredentials } = useSelector((state) => state.auth);
+
+  const [saveToDrive, { isLoading: saveToDriveIsLoading }] =
+    useSaveToDriveMutation();
 
   const saveNote = async () => {
     try {
@@ -34,7 +40,7 @@ export default function Workspace() {
       });
       navigate(`/workspace/${response.data?.data?.note?.id}`);
     } catch (error) {
-      console.error(error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
@@ -44,13 +50,13 @@ export default function Workspace() {
       <main id="main">
         <Container className="px-8">
           <Flex gap="4">
-            <Box className="max-w-[250px] flex-1">
+            <Box className="hidden max-w-[300px] flex-1 md:block">
               <WorkspaceFileTree />
             </Box>
             <Box className="flex-1">
-              <Card className="min-h-[100vh]">
+              <Card className="min-h-[100vh] max-w-full">
                 <Box className="">
-                  <Flex>
+                  <Flex gap="4">
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger>
                         <Text className="cursor-pointer" size="2">
@@ -74,18 +80,24 @@ export default function Workspace() {
                         >
                           Save
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item shortcut="Ctrl + Shift + s">
-                          <Text>Save As</Text>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Separator />
-                        <DropdownMenu.Item
-                          color="red"
-                          onClick={() => {
-                            editorRef.current.setMarkdown("");
-                          }}
-                        >
-                          Reset
-                        </DropdownMenu.Item>
+                        <DropdownMenu.Sub>
+                          <DropdownMenu.SubTrigger>
+                            Save To
+                          </DropdownMenu.SubTrigger>
+                          <DropdownMenu.SubContent>
+                            <DropdownMenu.Item
+                              onClick={async () => {
+                                saveToDrive({
+                                  access_token: googleCredentials.access_token,
+                                  title,
+                                  content: editorRef.current.getMarkdown(),
+                                });
+                              }}
+                            >
+                              Google Drive
+                            </DropdownMenu.Item>
+                          </DropdownMenu.SubContent>
+                        </DropdownMenu.Sub>
                       </DropdownMenu.Content>
                     </DropdownMenu.Root>
                   </Flex>

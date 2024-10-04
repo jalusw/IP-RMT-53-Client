@@ -70,6 +70,7 @@ export const api = createApi({
         url: `/notes/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Note"],
     }),
     enhanceNote: builder.mutation({
       query: (body) => ({
@@ -81,6 +82,13 @@ export const api = createApi({
     summarizeNote: builder.mutation({
       query: (body) => ({
         url: `/assistant/summarize`,
+        body,
+        method: "POST",
+      }),
+    }),
+    saveToDrive: builder.mutation({
+      query: (body) => ({
+        url: `/services/drive`,
         body,
         method: "POST",
       }),
@@ -100,4 +108,5 @@ export const {
   useSummarizeNoteMutation,
   useNotesQuery,
   useNoteQuery,
+  useSaveToDriveMutation,
 } = api;
