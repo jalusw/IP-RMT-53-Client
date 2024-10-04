@@ -4,7 +4,7 @@ export default function Theme({ children }) {
   const { appearance } = useSelector((state) => state.theme);
 
   return (
-    <RadixTheme accentColor="cyan" appearance={appearance}>
+    <RadixTheme accentColor="jade" appearance={appearance}>
       {children}
     </RadixTheme>
   );
