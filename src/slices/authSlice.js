@@ -5,8 +5,12 @@ export const authSlice = createSlice({
   initialState: {
     user: null,
     token: null,
+    googleCredentials: null,
   },
   reducers: {
+    setGoogleCredentials: (state, action) => {
+      state.googleCredentials = action.payload;
+    },
     setUser: (state, action) => {
       state.user = action.payload;
     },
@@ -16,4 +20,4 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUser, setToken } = authSlice.actions;
+export const { setUser, setToken, setGoogleCredentials } = authSlice.actions;

@@ -5,167 +5,150 @@ import {
   Separator,
   Card,
   Container,
-  Button,
   DropdownMenu,
   TextField,
 } from "@radix-ui/themes";
 
-import {
-  headingsPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  MDXEditor,
-  quotePlugin,
-  toolbarPlugin,
-  UndoRedo,
-  BoldItalicUnderlineToggles,
-  Separator as ToolbarSeparator,
-  imagePlugin,
-  InsertImage,
-  tablePlugin,
-  InsertTable,
-  thematicBreakPlugin,
-  InsertThematicBreak,
-  CreateLink,
-  linkDialogPlugin,
-  BlockTypeSelect,
-} from "@mdxeditor/editor";
-import "@mdxeditor/editor/style.css";
 import { useEffect, useRef, useState } from "react";
 
 import WorkspaceNavbar from "../components/utils/WorkspaceNavbar";
 import WorkspaceFileTree from "../components/utils/WorkspaceFileTree";
-import { useNoteQuery, useUpdateNoteMutation } from "../services/api";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {
+  api,
+  useDeleteNoteMutation,
+  useNoteQuery,
+  useSaveToDriveMutation,
+  useUpdateNoteMutation,
+} from "../services/api";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import WorkspaceEditor from "../components/utils/WorkspaceEditor";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function Workspace() {
-  const { appearance } = useSelector((state) => state.theme);
   const [title, setTitle] = useState("");
-  const [markdown, setMarkdown] = useState("");
-
   const { id } = useParams();
   const [updateNote] = useUpdateNoteMutation();
-  const { data: noteData, isLoading, refetch } = useNoteQuery(id);
+
+  const [deleteNote] = useDeleteNoteMutation();
+
+  const { googleCredentials } = useSelector((state) => state.auth);
+
+  const [saveToDrive, { isLoading: saveToDriveIsLoading }] =
+    useSaveToDriveMutation();
+
+  const { data: noteData, isLoading, refetch, isError } = useNoteQuery(id);
+  const editorRef = useRef();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const saveNote = async () => {
     try {
-      const response = await updateNote({
+      await updateNote({
         id,
         title,
-        content: markdown,
+        content: editorRef.current.getMarkdown(),
       });
       refetch();
+      dispatch(api.util.resetApiState);
     } catch (error) {
-      console.error(error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
+
+  if (isError) {
+    return <Navigate to="/workspace" />;
+  }
 
   useEffect(() => {
     if (noteData) {
       setTitle(noteData.data.note.title);
-      setMarkdown(noteData.data.note.content);
-      editorRef.current.setMarkdown(noteData.data.note.content);
+      editorRef.current?.setMarkdown(noteData.data.note.content);
     }
   }, [noteData]);
-
-  const editorRef = useRef();
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <>
       <WorkspaceNavbar />
       <main id="main">
-        <Container className="px-4">
+        <Container className="px-8">
           <Flex gap="4" className="">
-            <Box className="max-w-[250px] flex-1">
+            <Box className="hidden max-w-[300px] flex-1 md:block">
               <WorkspaceFileTree />
             </Box>
             <Box className="flex-1">
-              <Card className="min-h-[450px]">
-                <div>
-                  <DropdownMenu.Root>
-                    <DropdownMenu.Trigger>
-                      <Button variant="ghost">
-                        File
-                        <DropdownMenu.TriggerIcon />
-                      </Button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content>
-                      <DropdownMenu.Item
-                        shortcut="Ctrl + n"
-                        onClick={() => {
-                          setTitle("Untitled");
-                          editorRef.current.setMarkdown("");
-                        }}
-                      >
-                        New File
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Separator />
-                      <DropdownMenu.Item
-                        shortcut="Ctrl + s"
-                        onClick={() => saveNote()}
-                      >
-                        Save
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item shortcut="Ctrl + Shift + s">
-                        <Text>Save As</Text>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Separator />
-                      <DropdownMenu.Item
-                        color="red"
-                        onClick={() => {
-                          editorRef.current.setMarkdown("");
-                        }}
-                      >
-                        Reset
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                </div>
-                <Separator orientation="horizontal" className="w-full" />
-                <Box className="my-4">
-                  <Text size="2" asChild>
-                    <label>Title</label>
-                  </Text>
+              <Card className="min-h-[100vh]">
+                <Box className="">
+                  <Flex>
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger>
+                        <Text className="cursor-pointer" size="2">
+                          File
+                        </Text>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Content>
+                        <DropdownMenu.Item
+                          shortcut="Ctrl + n"
+                          onClick={() => {
+                            navigate("/workspace");
+                          }}
+                        >
+                          New Page
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          shortcut="Ctrl + s"
+                          onClick={() => saveNote()}
+                        >
+                          Save
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Sub>
+                          <DropdownMenu.SubTrigger>
+                            Save To
+                          </DropdownMenu.SubTrigger>
+                          <DropdownMenu.SubContent>
+                            <DropdownMenu.Item
+                              onClick={async () => {
+                                saveToDrive({
+                                  access_token: googleCredentials.access_token,
+                                  title,
+                                  content: editorRef.current.getMarkdown(),
+                                });
+                              }}
+                            >
+                              Google Drive
+                            </DropdownMenu.Item>
+                          </DropdownMenu.SubContent>
+                        </DropdownMenu.Sub>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          color="red"
+                          onClick={async () => {
+                            try {
+                              await deleteNote(id);
+                              navigate("/workspace");
+                            } catch (error) {
+                              toast.error(
+                                "An error occurred. Please try again later.",
+                              );
+                            }
+                          }}
+                        >
+                          Delete
+                        </DropdownMenu.Item>
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Root>
+                  </Flex>
+                  <Separator className="my-2 w-full" orientation="horizontal" />
                   <TextField.Root
-                    placeholder="Insert title here"
-                    className="w-full"
+                    className="my-4"
+                    placeholder="Insert Your Title Here"
                     value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                  />
+                    onChange={(e) => setTitle(e.target.value)}
+                    size="3"
+                  ></TextField.Root>
                 </Box>
-                <MDXEditor
-                  markdown={markdown}
-                  onChange={(value) => setMarkdown(value)}
-                  ref={editorRef}
-                  contentEditableClassName={`prose ${appearance == "dark" && "prose-invert"}`}
-                  plugins={[
-                    headingsPlugin(),
-                    quotePlugin(),
-                    listsPlugin(),
-                    markdownShortcutPlugin(),
-                    imagePlugin(),
-                    tablePlugin(),
-                    thematicBreakPlugin(),
-                    toolbarPlugin({
-                      toolbarContents: () => (
-                        <>
-                          <UndoRedo />
-                          <ToolbarSeparator />
-                          <BlockTypeSelect />
-                          <BoldItalicUnderlineToggles />
-                          <InsertImage />
-                          <InsertTable />
-                          <InsertThematicBreak />
-                        </>
-                      ),
-                    }),
-                  ]}
-                />
+                <WorkspaceEditor ref={editorRef} />
               </Card>
             </Box>
           </Flex>

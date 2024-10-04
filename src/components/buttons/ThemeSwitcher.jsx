@@ -3,7 +3,8 @@ import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "../../slices/themeSlice";
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher(props) {
+  const { variant = "soft" } = props;
   const dispatch = useDispatch();
   const { appearance } = useSelector((state) => state.theme);
   const toggleTheme = () => {
@@ -11,7 +12,7 @@ export default function ThemeSwitcher() {
   };
   return (
     <Button
-      variant="soft"
+      variant={variant}
       title="toggle theme"
       onClick={toggleTheme}
       className="cursor-pointer"

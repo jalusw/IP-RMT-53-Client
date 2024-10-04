@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "../../services/api";
 
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RegisterForm() {
   const {
@@ -32,6 +33,8 @@ export default function RegisterForm() {
             message: error.message,
           });
         });
+      } else {
+        toast.error("An error occurred. Please try again later.");
       }
     }
   };
@@ -39,12 +42,12 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid
-        className="my-8 gap-y-4 md:gap-y-0 lg:gap-x-4 lg:gap-y-4"
+        className="my-8 gap-y-4 md:gap-x-4"
         flow="row"
         align="start"
         columns={{
-          sm: "1",
-          md: "2",
+          xs: "1",
+          sm: "2",
         }}
       >
         <Box>

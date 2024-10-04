@@ -55,13 +55,15 @@ export default function ProfileSetting() {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
-        <Flex className="items-center space-x-4">
-          <Avatar fallback={user.username[0]} src={user.avatar} size="2" />
-          <Text className="font-bold">{user.username}</Text>
-        </Flex>
+        <Avatar
+          className="cursor-pointer"
+          fallback={user.username[0]}
+          src={user.avatar}
+          size="2"
+        />
       </Dialog.Trigger>
       <Dialog.Content maxWidth="450px">
-        <Dialog.Title>Edit profile</Dialog.Title>
+        <Dialog.Title className="manrope-bold">Edit Profile</Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Flex direction="row" align="center" gap="4">
             <Box className="relative my-8">
@@ -117,11 +119,11 @@ export default function ProfileSetting() {
           </Flex>
           <Flex gap="3" mt="4" justify="end">
             <Dialog.Close>
-              <Button variant="soft" color="gray">
+              <Button variant="soft" color="gray" className="cursor-pointer">
                 Cancel
               </Button>
             </Dialog.Close>
-            <Button disabled={isLoading}>
+            <Button disabled={isLoading} className="cursor-pointer">
               {isLoading && <Spinner />}
               Save
             </Button>

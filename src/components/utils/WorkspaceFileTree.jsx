@@ -1,97 +1,90 @@
-import {
-  Box,
-  Flex,
-  Text,
-  Section,
-  Separator,
-  Card,
-  Container,
-  Button,
-  ContextMenu,
-  DropdownMenu,
-  Dialog,
-  TextField,
-  Tabs,
-} from "@radix-ui/themes";
-import { useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Card, ContextMenu, Tabs } from "@radix-ui/themes";
+import { useNavigate, useParams } from "react-router-dom";
 import { useNotesQuery, useDeleteNoteMutation } from "../../services/api";
-import { FileIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { FileIcon } from "@radix-ui/react-icons";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function WorkspaceFileTree(props) {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const { className } = props;
 
   const {
     data: notesData,
     refetch,
     isLoading: notesIsLoading,
   } = useNotesQuery();
-  const [deleteNote, { isLoading: deleteNoteIsLoading }] =
-    useDeleteNoteMutation();
+
+  const [deleteNote] = useDeleteNoteMutation();
 
   if (notesIsLoading) {
     return <p>loading..</p>;
   }
 
-  if (notesData.data.notes.length == 0) {
-    return <p>it appears that you don't have any single note o_O</p>;
-  }
-
   return (
-    <Card>
-      <Box>
-        <TextField.Root placeholder="Search files...">
-          <TextField.Slot></TextField.Slot>
-          <TextField.Slot>
-            <Button variant="ghost">
-              <MagnifyingGlassIcon />
-            </Button>
-          </TextField.Slot>
-        </TextField.Root>
-      </Box>
-
-      <Separator className="my-2 w-full" />
-      <Flex direction="column" className="space-y-2" asChild>
-        <ul>
-          {notesData.data?.notes?.map((note) => (
-            <li
-              className="w-full cursor-pointer rounded p-1 px-2 hover:bg-slate-200"
-              key={note.id}
-            >
-              <ContextMenu.Root>
-                <ContextMenu.Trigger asChild>
-                  <Text
-                    className="block w-full"
-                    size="2"
-                    onClick={() => {
-                      navigate("/workspace/" + note.id);
-                    }}
+    <Card className={`sticky top-0 h-[100vh] ${className}`}>
+      <Tabs.Root defaultValue="files">
+        <Tabs.List>
+          <Tabs.Trigger value="files">
+            <FileIcon />
+          </Tabs.Trigger>
+        </Tabs.List>
+        <Box pt="3">
+          <Tabs.Content value="files">
+            <Flex direction="column" className="space-y-2" asChild>
+              <ul>
+                {notesData.data?.notes?.map((note) => (
+                  <li
+                    className="w-full cursor-pointer rounded p-1 px-2"
+                    key={note.id}
                   >
-                    {note.title}
-                  </Text>
-                </ContextMenu.Trigger>
-                <ContextMenu.Content>
-                  <ContextMenu.Item shortcut="⌘ E">Archive</ContextMenu.Item>
-                  <ContextMenu.Item shortcut="⌘ D">Duplicate</ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item
-                    color="red"
-                    onClick={async () => {
-                      try {
-                        const response = await deleteNote(note.id);
-                        refetch();
-                      } catch (error) {
-                        console.error(error);
-                      }
-                    }}
-                  >
-                    Delete
-                  </ContextMenu.Item>
-                </ContextMenu.Content>
-              </ContextMenu.Root>
-            </li>
-          ))}
-        </ul>
-      </Flex>
+                    <ContextMenu.Root>
+                      <ContextMenu.Trigger asChild>
+                        <Text
+                          className="block w-full"
+                          color={id == note.id ? "jade" : "black"}
+                          size="2"
+                          onClick={() => {
+                            navigate("/workspace/" + note.id);
+                          }}
+                        >
+                          {note.title}
+                        </Text>
+                      </ContextMenu.Trigger>
+                      <ContextMenu.Content>
+                        <ContextMenu.Item shortcut="⌘ E">
+                          Archive
+                        </ContextMenu.Item>
+                        <ContextMenu.Item shortcut="⌘ D">
+                          Duplicate
+                        </ContextMenu.Item>
+                        <ContextMenu.Separator />
+                        <ContextMenu.Item
+                          color="red"
+                          onClick={async () => {
+                            try {
+                              await deleteNote(note.id);
+                              navigate("/workspace");
+                            } catch (error) {
+                              toast.error(
+                                "An error occurred. Please try again later.",
+                              );
+                            }
+                          }}
+                        >
+                          Delete
+                        </ContextMenu.Item>
+                      </ContextMenu.Content>
+                    </ContextMenu.Root>
+                  </li>
+                ))}
+              </ul>
+            </Flex>
+          </Tabs.Content>
+        </Box>
+      </Tabs.Root>
     </Card>
   );
 }

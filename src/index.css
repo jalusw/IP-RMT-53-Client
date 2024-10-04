@@ -6,3 +6,70 @@
   --default-font-family: "Manrope", sans-serif; /* Your custom default font */
   --heading-font-family: "Merriweather", serif; /* Your custom font for <Heading> components */
 }
+
+.merriweather-light {
+  font-family: "Merriweather", system-ui;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.merriweather-regular {
+  font-family: "Merriweather", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.merriweather-bold {
+  font-family: "Merriweather", system-ui;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.merriweather-black {
+  font-family: "Merriweather", system-ui;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.merriweather-light-italic {
+  font-family: "Merriweather", system-ui;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.merriweather-regular-italic {
+  font-family: "Merriweather", system-ui;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.merriweather-bold-italic {
+  font-family: "Merriweather", system-ui;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.merriweather-black-italic {
+  font-family: "Merriweather", system-ui;
+  font-weight: 900;
+  font-style: italic;
+}
+
+
+.manrope-light {
+  font-family: "Manrope", system-ui;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.manrope-regular{
+  font-family: "Manrope", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.manrope-bold{
+  font-family: "Manrope", system-ui;
+  font-weight: 700;
+  font-style: normal;
+}
