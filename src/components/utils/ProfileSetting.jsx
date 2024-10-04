@@ -55,10 +55,12 @@ export default function ProfileSetting() {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
-        <Flex className="items-center space-x-4">
-          <Avatar fallback={user.username[0]} src={user.avatar} size="2" />
-          <Text className="font-bold">{user.username}</Text>
-        </Flex>
+        <Avatar
+          className="cursor-pointer"
+          fallback={user.username[0]}
+          src={user.avatar}
+          size="2"
+        />
       </Dialog.Trigger>
       <Dialog.Content maxWidth="450px">
         <Dialog.Title className="manrope-bold">Edit Profile</Dialog.Title>
