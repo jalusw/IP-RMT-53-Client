@@ -13,17 +13,31 @@ import { useEffect, useRef, useState } from "react";
 
 import WorkspaceNavbar from "../components/utils/WorkspaceNavbar";
 import WorkspaceFileTree from "../components/utils/WorkspaceFileTree";
-import { api, useNoteQuery, useUpdateNoteMutation } from "../services/api";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  api,
+  useDeleteNoteMutation,
+  useNoteQuery,
+  useSaveToDriveMutation,
+  useUpdateNoteMutation,
+} from "../services/api";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import WorkspaceEditor from "../components/utils/WorkspaceEditor";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function Workspace() {
   const [title, setTitle] = useState("");
   const { id } = useParams();
   const [updateNote] = useUpdateNoteMutation();
 
-  const { data: noteData, isLoading, refetch } = useNoteQuery(id);
+  const [deleteNote] = useDeleteNoteMutation();
+
+  const { googleCredentials } = useSelector((state) => state.auth);
+
+  const [saveToDrive, { isLoading: saveToDriveIsLoading }] =
+    useSaveToDriveMutation();
+
+  const { data: noteData, isLoading, refetch, isError } = useNoteQuery(id);
   const editorRef = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,9 +52,13 @@ export default function Workspace() {
       refetch();
       dispatch(api.util.resetApiState);
     } catch (error) {
-      console.error(error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
+
+  if (isError) {
+    return <Navigate to="/workspace" />;
+  }
 
   useEffect(() => {
     if (noteData) {
@@ -53,9 +71,9 @@ export default function Workspace() {
     <>
       <WorkspaceNavbar />
       <main id="main">
-        <Container className="px-4">
+        <Container className="px-8">
           <Flex gap="4" className="">
-            <Box className="max-w-[250px] flex-1">
+            <Box className="hidden max-w-[300px] flex-1 md:block">
               <WorkspaceFileTree />
             </Box>
             <Box className="flex-1">
@@ -84,17 +102,39 @@ export default function Workspace() {
                         >
                           Save
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item shortcut="Ctrl + Shift + s">
-                          <Text>Save As</Text>
-                        </DropdownMenu.Item>
+                        <DropdownMenu.Sub>
+                          <DropdownMenu.SubTrigger>
+                            Save To
+                          </DropdownMenu.SubTrigger>
+                          <DropdownMenu.SubContent>
+                            <DropdownMenu.Item
+                              onClick={async () => {
+                                saveToDrive({
+                                  access_token: googleCredentials.access_token,
+                                  title,
+                                  content: editorRef.current.getMarkdown(),
+                                });
+                              }}
+                            >
+                              Google Drive
+                            </DropdownMenu.Item>
+                          </DropdownMenu.SubContent>
+                        </DropdownMenu.Sub>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Item
                           color="red"
-                          onClick={() => {
-                            editorRef.current.setMarkdown("");
+                          onClick={async () => {
+                            try {
+                              await deleteNote(id);
+                              navigate("/workspace");
+                            } catch (error) {
+                              toast.error(
+                                "An error occurred. Please try again later.",
+                              );
+                            }
                           }}
                         >
-                          Reset
+                          Delete
                         </DropdownMenu.Item>
                       </DropdownMenu.Content>
                     </DropdownMenu.Root>
