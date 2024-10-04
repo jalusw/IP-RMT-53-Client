@@ -18,7 +18,7 @@ export default function Home() {
         <Section>
           <Container className="px-4">
             <div className="mx-auto text-center">
-              <Heading className="block text-6xl font-bold">
+              <Heading className="manrope-bold block text-6xl font-bold">
                 Yet another note taking app
               </Heading>
 
